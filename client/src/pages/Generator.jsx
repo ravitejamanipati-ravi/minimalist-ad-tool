@@ -1,17 +1,22 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import ScoreCards from '../components/ScoreCards.jsx'
 
 export default function Generator() {
   const [url, setUrl] = useState('')
   const [product, setProduct] = useState(null)
   const [ad, setAd] = useState(null)
+  const [scores, setScores] = useState(null)
   const [loadingProduct, setLoadingProduct] = useState(false)
   const [loadingAd, setLoadingAd] = useState(false)
+  const [loadingScore, setLoadingScore] = useState(false)
   const [error, setError] = useState(null)
+  const creativeRef = useRef(null)
 
   async function fetchProduct() {
     setError(null)
     setProduct(null)
     setAd(null)
+    setScores(null)
     setLoadingProduct(true)
     try {
       const res = await fetch('/api/product', {
@@ -32,7 +37,10 @@ export default function Generator() {
   async function generateAd() {
     setError(null)
     setAd(null)
+    setScores(null)
     setLoadingAd(true)
+
+    let generated = null
     try {
       const res = await fetch('/api/generate', {
         method: 'POST',
@@ -41,13 +49,49 @@ export default function Generator() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed to generate ad')
+      generated = data
       setAd(data)
     } catch (e) {
       setError(e.message)
+      return
     } finally {
       setLoadingAd(false)
     }
+
+    // Auto-score the generated copy
+    setLoadingScore(true)
+    try {
+      const adText = [generated.headline, generated.body, generated.cta].filter(Boolean).join(' ')
+      const res = await fetch('/api/score', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ adText }),
+      })
+      const data = await res.json()
+      if (res.ok) setScores(data)
+    } catch {
+      // scoring failure is non-fatal — ad still shows
+    } finally {
+      setLoadingScore(false)
+    }
   }
+
+  async function exportPng() {
+    if (!creativeRef.current) return
+    const { default: html2canvas } = await import('html2canvas')
+    const canvas = await html2canvas(creativeRef.current, {
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      scale: 2,
+    })
+    const link = document.createElement('a')
+    link.download = `${product.handle}.png`
+    link.href = canvas.toDataURL('image/png')
+    link.click()
+  }
+
+  const policyPasses = scores?.policy?.score >= 7
+  const exportBlocked = scores && !policyPasses
 
   return (
     <div className="space-y-8">
@@ -105,38 +149,66 @@ export default function Generator() {
           </div>
           <button
             onClick={generateAd}
-            disabled={loadingAd}
+            disabled={loadingAd || loadingScore}
             className="w-full py-2 border border-black text-sm rounded hover:bg-black hover:text-white transition-colors disabled:opacity-40"
           >
-            {loadingAd ? 'Generating…' : 'Generate Ad'}
+            {loadingAd ? 'Generating…' : loadingScore ? 'Scoring…' : 'Generate Ad'}
           </button>
         </div>
       )}
 
       {ad && product && (
-        <div className="border border-gray-200 rounded-lg overflow-hidden">
-          <div className="px-5 py-3 border-b border-gray-100">
-            <p className="text-xs font-medium uppercase tracking-wider text-gray-400">Generated Ad</p>
-          </div>
-
-          {/* Composed creative: real product photo with copy below, not overlaid */}
-          {product.imageUrl && (
-            <div className="bg-gray-50 flex items-center justify-center p-6">
-              <img
-                src={product.imageUrl}
-                alt={product.title}
-                className="max-h-72 w-auto object-contain"
-              />
+        <div className="space-y-4">
+          {/* Composed creative — this element is captured for PNG export */}
+          <div className="border border-gray-200 rounded-lg overflow-hidden">
+            <div className="px-5 py-3 border-b border-gray-100">
+              <p className="text-xs font-medium uppercase tracking-wider text-gray-400">Generated Ad</p>
             </div>
-          )}
 
-          <div className="px-5 py-4 space-y-3 border-t border-gray-100">
-            <p className="text-lg font-semibold leading-tight">{ad.headline}</p>
-            <p className="text-sm text-gray-700 leading-relaxed">{ad.body}</p>
-            <span className="inline-block text-xs font-medium uppercase tracking-wider border border-black px-3 py-1.5">
-              {ad.cta}
-            </span>
+            <div ref={creativeRef} className="bg-white">
+              {product.imageUrl && (
+                <div className="bg-gray-50 flex items-center justify-center p-6">
+                  <img
+                    src={product.imageUrl}
+                    alt={product.title}
+                    className="max-h-72 w-auto object-contain"
+                  />
+                </div>
+              )}
+              <div className="px-5 py-4 space-y-3 border-t border-gray-100">
+                <p className="text-lg font-semibold leading-tight">{ad.headline}</p>
+                <p className="text-sm text-gray-700 leading-relaxed">{ad.body}</p>
+                <span className="inline-block text-xs font-medium uppercase tracking-wider border border-black px-3 py-1.5">
+                  {ad.cta}
+                </span>
+              </div>
+            </div>
           </div>
+
+          {/* Export row */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={exportPng}
+              disabled={loadingScore || exportBlocked}
+              className="px-4 py-2 border border-black text-sm rounded hover:bg-black hover:text-white transition-colors disabled:opacity-40"
+            >
+              Export as PNG
+            </button>
+            {loadingScore && (
+              <span className="text-sm text-gray-400">Scoring…</span>
+            )}
+            {exportBlocked && (
+              <span className="text-sm text-red-600">
+                Export blocked — policy compliance must score ≥ 7
+              </span>
+            )}
+            {scores && policyPasses && (
+              <span className="text-sm text-green-600">Cleared for export</span>
+            )}
+          </div>
+
+          {/* Auto-score cards */}
+          {scores && <ScoreCards scores={scores} showBanner={false} />}
         </div>
       )}
     </div>

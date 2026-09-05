@@ -14,3 +14,6 @@ Minimalist brand tone: science-led, clinical, ingredient-first.
 - Emotional or aspirational copy without mechanism ("your skin will thank you", "feel confident again")
 - Vague benefit claims with no reference to how the product works ("gives you better skin")
 
+**Suggestions:**
+For each issue, "suggestion" must be a one-line tone-appropriate alternative. Target the Brand team: replace fear-based or emotional language with clinical, mechanism-focused copy that names what the ingredient actually does. Example: Replace "fight breakouts" with "Salicylic Acid 2% exfoliates inside the pore to reduce clogging".
+

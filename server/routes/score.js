@@ -15,9 +15,9 @@ Score the given ad copy across three dimensions. Each dimension is evaluated ind
 
 const OUTPUT_FORMAT = `Return only valid JSON:
 {
-  "policy":   { "score": <1-10>, "rationale": "<1 sentence>", "issues": ["<specific violation>"] },
-  "tone":     { "score": <1-10>, "rationale": "<1 sentence>", "issues": ["<specific issue>"] },
-  "language": { "score": <1-10>, "rationale": "<1 sentence>", "issues": ["<specific issue>"] }
+  "policy":   { "score": <1-10>, "rationale": "<1 sentence>", "issues": [{ "finding": "<violation>", "suggestion": "<one-line compliance-safe rewrite>" }] },
+  "tone":     { "score": <1-10>, "rationale": "<1 sentence>", "issues": [{ "finding": "<issue>",     "suggestion": "<one-line tone-appropriate alternative>" }] },
+  "language": { "score": <1-10>, "rationale": "<1 sentence>", "issues": [{ "finding": "<issue>",     "suggestion": "<one-line ingredient-first restructure>" }] }
 }
 
 Score 10 = perfect. Issues array is empty when score ≥ 7.`
