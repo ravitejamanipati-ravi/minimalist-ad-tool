@@ -1,9 +1,7 @@
 import { useState } from 'react'
 import ScoreCards from '../components/ScoreCards.jsx'
 
-export default function Scorer() {
-  const [adText, setAdText] = useState('')
-  const [scores, setScores] = useState(null)
+export default function Scorer({ adText, setAdText, scores, setScores }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 

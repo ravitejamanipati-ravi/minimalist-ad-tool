@@ -1,11 +1,7 @@
 import { useState, useRef } from 'react'
 import ScoreCards from '../components/ScoreCards.jsx'
 
-export default function Generator() {
-  const [url, setUrl] = useState('')
-  const [product, setProduct] = useState(null)
-  const [ad, setAd] = useState(null)
-  const [scores, setScores] = useState(null)
+export default function Generator({ url, setUrl, product, setProduct, ad, setAd, scores, setScores }) {
   const [loadingProduct, setLoadingProduct] = useState(false)
   const [loadingAd, setLoadingAd] = useState(false)
   const [loadingScore, setLoadingScore] = useState(false)
