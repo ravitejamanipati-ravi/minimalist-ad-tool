@@ -119,23 +119,19 @@ export default function Generator() {
             <p className="text-xs font-medium uppercase tracking-wider text-gray-400">Generated Ad</p>
           </div>
 
-          {/* Composed creative: real product photo + copy overlay */}
-          <div className="relative bg-gray-50">
-            {product.imageUrl && (
+          {/* Composed creative: real product photo with copy below, not overlaid */}
+          {product.imageUrl && (
+            <div className="bg-gray-50 flex items-center justify-center p-6">
               <img
                 src={product.imageUrl}
                 alt={product.title}
-                className="w-full max-h-80 object-cover"
+                className="max-h-72 w-auto object-contain"
               />
-            )}
-            <div className="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm px-5 py-4">
-              <p className="font-semibold text-lg leading-tight">{ad.headline}</p>
-              <p className="text-xs text-gray-500 mt-0.5 uppercase tracking-wider">{ad.cta}</p>
             </div>
-          </div>
+          )}
 
-          <div className="px-5 py-4 space-y-3">
-            <p className="text-sm font-semibold">{ad.headline}</p>
+          <div className="px-5 py-4 space-y-3 border-t border-gray-100">
+            <p className="text-lg font-semibold leading-tight">{ad.headline}</p>
             <p className="text-sm text-gray-700 leading-relaxed">{ad.body}</p>
             <span className="inline-block text-xs font-medium uppercase tracking-wider border border-black px-3 py-1.5">
               {ad.cta}

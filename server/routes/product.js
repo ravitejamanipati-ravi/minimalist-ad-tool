@@ -6,7 +6,10 @@ router.post('/', async (req, res) => {
   const { url } = req.body
   if (!url) return res.status(400).json({ error: 'URL required' })
 
-  const match = url.match(/beminimalist\.co\/products\/([^/?#]+)/)
+  // Matches both:
+  //   beminimalist.co/products/{handle}
+  //   beminimalist.co/collections/{slug}/products/{handle}
+  const match = url.match(/beminimalist\.co(?:\/collections\/[^/?#]+)?\/products\/([^/?#]+)/)
   if (!match) return res.status(400).json({ error: 'Not a valid beminimalist.co product URL' })
 
   const handle = match[1]
