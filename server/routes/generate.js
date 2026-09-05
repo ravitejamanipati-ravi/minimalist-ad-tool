@@ -1,38 +1,24 @@
 import { Router } from 'express'
+import { readFileSync } from 'fs'
+import { fileURLToPath } from 'url'
+import { dirname, join } from 'path'
 import Anthropic from '@anthropic-ai/sdk'
 
 const router = Router()
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-
-const SYSTEM = `You are a copywriter for Minimalist, an Indian skincare brand.
-
-Brand voice: science-led, ingredient-first, clinical. The brand explicitly rejects "natural/clean" beauty positioning — "everything is a chemical" is a core belief.
-
-Hard rules:
-- Lead with the active ingredient and its concentration (e.g. "2% Salicylic Acid")
-- No fear-based framing (no: "fight", "combat", "battle", "destroy")
-- No superlatives without substantiation (no: "best", "most powerful", "revolutionary")
-- No cure/treat language — ASCI code compliance for cosmetics in India
-- No fairness, whitening, or skin-tone claims
-- No unsubstantiated efficacy percentages
-- Tone: precise, confident, minimal
-
-Return only valid JSON with exactly these keys:
-{
-  "headline": "string — ≤8 words, ingredient-led",
-  "body": "string — 1–2 sentences, mechanism-focused",
-  "cta": "string — ≤4 words"
-}`
+const promptPath = join(dirname(fileURLToPath(import.meta.url)), '../prompts/generator.md')
 
 router.post('/', async (req, res) => {
   const { product } = req.body
   if (!product) return res.status(400).json({ error: 'Product data required' })
 
   try {
+    const system = readFileSync(promptPath, 'utf8')
+
     const message = await client.messages.create({
       model: 'claude-sonnet-4-6',
       max_tokens: 512,
-      system: SYSTEM,
+      system,
       messages: [
         {
           role: 'user',

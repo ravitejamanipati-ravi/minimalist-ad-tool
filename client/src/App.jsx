@@ -1,6 +1,7 @@
 import { Routes, Route, NavLink } from 'react-router-dom'
 import Generator from './pages/Generator.jsx'
 import Scorer from './pages/Scorer.jsx'
+import Prompts from './pages/Prompts.jsx'
 
 export default function App() {
   return (
@@ -24,11 +25,20 @@ export default function App() {
         >
           Scorer
         </NavLink>
+        <NavLink
+          to="/prompts"
+          className={({ isActive }) =>
+            `text-sm ${isActive ? 'text-black font-medium' : 'text-gray-400 hover:text-black'}`
+          }
+        >
+          Prompts
+        </NavLink>
       </nav>
       <main className="max-w-3xl mx-auto px-6 py-10">
         <Routes>
           <Route path="/" element={<Generator />} />
           <Route path="/scorer" element={<Scorer />} />
+          <Route path="/prompts" element={<Prompts />} />
         </Routes>
       </main>
     </div>
