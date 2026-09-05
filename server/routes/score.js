@@ -10,7 +10,13 @@ Score the given ad copy across three dimensions. Each dimension is evaluated ind
 
 --- policy ---
 ASCI code compliance for cosmetics in India.
-Violations: cure/treat/heal language, fairness or skin-tone claims, unsubstantiated efficacy percentages (e.g. "reduces acne by 87%"), drug or medical claims.
+
+Violations — flag these:
+- Cure/treat/heal language: claims the product cures, treats, or heals a condition (e.g. "treats acne", "heals eczema")
+- Skin-lightening or discriminatory tone: claims about getting fairer, whiter, lighter skin, or language that implies darker skin is a problem (e.g. "get fairer skin", "reduce dark spots to look lighter"). DO NOT flag general complexion-improvement language like "improve skin complexion" or "even skin tone" — these are standard and compliant in the cosmetics category.
+- Fabricated efficacy numbers: specific percentages with no plausible study behind them (e.g. "reduces acne by 87%"). DO NOT flag efficacy claims backed by clinical studies just because the study is not cited inline in the ad copy — real ads never cite inline, and "clinically proven" or "clinically studied" is compliant when a real study plausibly exists. Only flag if the claim appears fabricated or unverifiable.
+- Drug or medical claims: claims that imply prescription-level or pharmaceutical action
+- "Pure" used as a clean-beauty marketing claim (e.g. "pure and natural", "100% pure toxin-free"). DO NOT flag "pure" when it describes ingredient grade or concentration (e.g. "Pure 10% Niacinamide") — Minimalist uses this phrasing in their real product copy.
 
 --- tone ---
 Minimalist brand tone.
@@ -20,7 +26,7 @@ Bad: fear-based framing ("fight acne", "combat dryness"), emotional fluff, vague
 --- language ---
 Minimalist brand language rules.
 Good: active ingredient + concentration led, mechanism-focused, minimal copy.
-Bad: superlatives without substantiation ("best", "most powerful", "revolutionary"), "natural/clean/pure" positioning, filler words.
+Bad: superlatives without substantiation ("best", "most powerful", "revolutionary"), "natural/clean/toxin-free" positioning, filler words. Note: "pure" used to describe ingredient grade (e.g. "Pure 10% Niacinamide") is correct Minimalist language — do not flag it.
 
 Return only valid JSON:
 {
