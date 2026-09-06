@@ -102,7 +102,7 @@ export default function Generator({ url, setUrl, product, setProduct, ad, setAd,
     const { default: html2canvas } = await import('html2canvas')
     const canvas = await html2canvas(creativeRef.current, {
       useCORS: true,
-      backgroundColor: '#ffffff',
+      backgroundColor: '#f8f8f7',
       scale: 2,
     })
     const link = document.createElement('a')
@@ -118,7 +118,7 @@ export default function Generator({ url, setUrl, product, setProduct, ad, setAd,
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-xl font-semibold">Ad Generator</h1>
+        <h1 className="text-xl font-semibold tracking-wide leading-snug">Ad Generator</h1>
         <p className="text-sm text-gray-500 mt-1">
           Paste a beminimalist.co product URL. Product photo is real — no AI-generated imagery.
         </p>
@@ -129,7 +129,7 @@ export default function Generator({ url, setUrl, product, setProduct, ad, setAd,
           <input
             type="url"
             value={url}
-            onChange={e => setUrl(e.target.value)}
+            onChange={e => { setUrl(e.target.value); setProduct(null); setAd(null); setScores(null) }}
             onKeyDown={e => e.key === 'Enter' && url && !loadingProduct && fetchProduct()}
             placeholder="https://beminimalist.co/products/salicylic-acid-2"
             className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-black"
@@ -137,7 +137,11 @@ export default function Generator({ url, setUrl, product, setProduct, ad, setAd,
           <button
             onClick={fetchProduct}
             disabled={!url || loadingProduct}
-            className="px-4 py-2 bg-black text-white text-sm rounded disabled:opacity-40 hover:bg-gray-800 transition-colors"
+            className={`px-4 py-2 text-sm rounded transition-colors ${
+              url && !product && !loadingProduct
+                ? 'bg-black text-white hover:bg-gray-800'
+                : 'bg-gray-100 text-gray-400'
+            }`}
           >
             {loadingProduct ? 'Fetching…' : 'Fetch'}
           </button>
@@ -253,9 +257,13 @@ export default function Generator({ url, setUrl, product, setProduct, ad, setAd,
           <button
             onClick={() => generateAd()}
             disabled={loadingAd || loadingScore}
-            className="w-full py-2 border border-black text-sm rounded hover:bg-black hover:text-white transition-colors disabled:opacity-40"
+            className={`w-full py-2 text-sm rounded transition-colors disabled:opacity-40 ${
+              ad
+                ? 'border border-gray-300 text-gray-500 hover:border-black hover:text-black'
+                : 'bg-black text-white hover:bg-gray-800'
+            }`}
           >
-            {loadingAd ? 'Generating…' : loadingScore ? 'Scoring…' : 'Generate Ad'}
+            {loadingAd ? 'Generating…' : ad ? 'Regenerate Ad' : 'Generate Ad'}
           </button>
         </div>
       )}
@@ -267,22 +275,95 @@ export default function Generator({ url, setUrl, product, setProduct, ad, setAd,
               <p className="text-xs font-medium uppercase tracking-wider text-gray-400">Generated Ad</p>
             </div>
 
-            <div ref={creativeRef} className="bg-white">
-              {product.imageUrl && (
-                <div className="bg-gray-50 flex items-center justify-center p-6">
-                  <img
-                    src={product.imageUrl}
-                    alt={product.title}
-                    className="max-h-72 w-auto object-contain"
-                  />
+            <div className="flex justify-center bg-gray-100 p-6">
+              <div
+                ref={creativeRef}
+                style={{
+                  position: 'relative',
+                  width: 540,
+                  height: 540,
+                  flexShrink: 0,
+                  backgroundColor: '#f8f8f7',
+                  overflow: 'hidden',
+                  fontFamily: 'Inter, system-ui, sans-serif',
+                }}
+              >
+                {/* Product image — centered, ~54% of canvas height */}
+                <div style={{
+                  position: 'absolute',
+                  top: 36, left: 60, right: 60, height: 290,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  {product.imageUrl ? (
+                    <img
+                      src={product.imageUrl}
+                      alt={product.title}
+                      style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
+                    />
+                  ) : (
+                    <p style={{ fontSize: 14, color: '#bbb', letterSpacing: '0.05em', textAlign: 'center' }}>
+                      {product.title}
+                    </p>
+                  )}
                 </div>
-              )}
-              <div className="px-5 py-4 space-y-3 border-t border-gray-100">
-                <p className="text-lg font-semibold leading-tight">{ad.headline}</p>
-                <p className="text-sm text-gray-700 leading-relaxed">{ad.body}</p>
-                <span className="inline-block text-xs font-medium uppercase tracking-wider border border-black px-3 py-1.5">
-                  {ad.cta}
-                </span>
+
+                {/* Headline, body, CTA */}
+                <div style={{
+                  position: 'absolute',
+                  top: 346, left: 44, right: 44,
+                  textAlign: 'center',
+                }}>
+                  <p style={{
+                    fontSize: 22, fontWeight: 700,
+                    letterSpacing: '-0.025em', lineHeight: 1.2,
+                    color: '#111111', marginBottom: 10,
+                  }}>
+                    {ad.headline}
+                  </p>
+                  <p style={{
+                    fontSize: 11.5, color: '#666666',
+                    lineHeight: 1.65, marginBottom: 16,
+                  }}>
+                    {ad.body}
+                  </p>
+                  <p style={{
+                    fontSize: 10, fontWeight: 500,
+                    letterSpacing: '0.18em', textTransform: 'uppercase',
+                    color: '#222222',
+                  }}>
+                    {ad.cta}
+                  </p>
+                </div>
+
+                {/* Brand name */}
+                <div style={{
+                  position: 'absolute',
+                  bottom: 22, left: 0, right: 0,
+                  textAlign: 'center',
+                }}>
+                  <p style={{
+                    fontSize: 9, letterSpacing: '0.35em',
+                    textTransform: 'uppercase', color: '#bbbbbb',
+                  }}>
+                    Minimalist
+                  </p>
+                </div>
+
+                {/* Scoring overlay */}
+                {loadingScore && (
+                  <div style={{
+                    position: 'absolute', inset: 0,
+                    backgroundColor: 'rgba(248,248,247,0.9)',
+                    display: 'flex', flexDirection: 'column',
+                    alignItems: 'center', justifyContent: 'center',
+                    zIndex: 10,
+                  }}>
+                    <div className="w-5 h-5 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+                    <p style={{ fontSize: 11.5, color: '#666', letterSpacing: '0.04em', marginTop: 14 }}>
+                      Scoring your ad…
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -290,19 +371,19 @@ export default function Generator({ url, setUrl, product, setProduct, ad, setAd,
           <div className="flex items-center gap-3">
             <button
               onClick={exportPng}
-              disabled={loadingScore || exportBlocked}
-              className="px-4 py-2 border border-black text-sm rounded hover:bg-black hover:text-white transition-colors disabled:opacity-40"
+              disabled={loadingScore || exportBlocked || !scores}
+              className={`px-4 py-2 text-sm rounded transition-colors ${
+                !loadingScore && scores && policyPasses
+                  ? 'bg-black text-white hover:bg-gray-800'
+                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+              }`}
             >
               Export as PNG
             </button>
-            {loadingScore && <span className="text-sm text-gray-400">Scoring…</span>}
             {exportBlocked && (
               <span className="text-sm text-red-600">
                 Export blocked — policy compliance must score ≥ 7
               </span>
-            )}
-            {scores && policyPasses && (
-              <span className="text-sm text-green-600">Cleared for export</span>
             )}
           </div>
 

@@ -41,11 +41,11 @@ export default function ScoreCards({ scores, showBanner = true }) {
   const policyPasses = scores.policy.score >= 7
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {DIMENSIONS.map(({ key, label, owner, description, blocking }) => {
         const result = scores[key]
         return (
-          <div key={key} className="border border-gray-200 rounded-lg p-5 space-y-3">
+          <div key={key} className="border border-gray-200 rounded-lg p-6 space-y-3">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2">

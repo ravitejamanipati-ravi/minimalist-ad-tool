@@ -29,7 +29,7 @@ export default function Scorer({ adText, setAdText, scores, setScores }) {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-xl font-semibold">Ad Scorer</h1>
+        <h1 className="text-xl font-semibold tracking-wide leading-snug">Ad Scorer</h1>
         <p className="text-sm text-gray-500 mt-1">
           Ads generated in this tool are scored automatically. Use this tab to score any other ad
           copy — a different draft, a competitor comparison, or anything a reviewer wants checked
