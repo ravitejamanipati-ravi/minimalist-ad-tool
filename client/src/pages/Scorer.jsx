@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import ScoreCards from '../components/ScoreCards.jsx'
+import HighlightedAd from '../components/HighlightedAd.jsx'
 
 export default function Scorer({ adText, setAdText, scores, setScores }) {
   const [loading, setLoading] = useState(false)
@@ -55,7 +56,12 @@ export default function Scorer({ adText, setAdText, scores, setScores }) {
 
       {error && <p className="text-sm text-red-600">{error}</p>}
 
-      {scores && <ScoreCards scores={scores} />}
+      {scores && (
+        <div className="space-y-6">
+          <HighlightedAd text={adText} scores={scores} />
+          <ScoreCards scores={scores} />
+        </div>
+      )}
     </div>
   )
 }

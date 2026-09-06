@@ -10,5 +10,9 @@ ASCI code compliance for cosmetics in India.
 - **Drug or medical claims:** claims that imply prescription-level or pharmaceutical action
 - **"Pure" as a clean-beauty marketing claim** (e.g. "pure and natural", "100% pure toxin-free"). Do not flag "pure" when it describes ingredient grade (e.g. "Pure 10% Niacinamide") — Minimalist uses this phrasing in their real product copy.
 
+**Source attribution:**
+- Violations from ASCI advertising standards (cure/treat language, skin-lightening claims, fabricated efficacy numbers, drug claims): tag `source` as "ASCI Code"
+- Violations from Minimalist's own brand positioning ("pure" used as a clean-beauty marketing claim): tag `source` as "Brand Values"
+
 **Suggestions:**
 For each violation, "suggestion" must be a one-line rewrite that preserves the product benefit while removing the non-compliant phrase. Target the Legal reviewer: flag the exact non-compliant phrase and provide an ASCI-compliant alternative. Example: Replace "treats acne" with "visibly reduces the appearance of blemishes".

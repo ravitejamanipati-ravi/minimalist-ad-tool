@@ -66,7 +66,12 @@ export default function ScoreCards({ scores, showBanner = true }) {
                     <li key={i} className="text-sm">
                       <div className="flex gap-2 text-gray-600">
                         <span className="text-gray-300 flex-shrink-0 mt-0.5">—</span>
-                        <span>{finding}</span>
+                        <span>
+                          {issue.source && (
+                            <span className="text-xs font-medium text-gray-400 mr-1.5">[{issue.source}]</span>
+                          )}
+                          {finding}
+                        </span>
                       </div>
                       {suggestion && (
                         <p className="text-xs text-blue-600 mt-1 ml-4">
