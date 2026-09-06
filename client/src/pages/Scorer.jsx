@@ -59,7 +59,16 @@ export default function Scorer({ adText, setAdText, scores, setScores }) {
       {scores && (
         <div className="space-y-6">
           <HighlightedAd text={adText} scores={scores} />
-          <ScoreCards scores={scores} />
+          <div className={`rounded-lg px-5 py-4 text-sm font-medium border ${
+            scores.policy.score >= 7
+              ? 'bg-green-50 text-green-800 border-green-200'
+              : 'bg-red-50 text-red-800 border-red-200'
+          }`}>
+            {scores.policy.score >= 7
+              ? 'Cleared for export — policy compliance passed.'
+              : 'Export blocked — policy compliance must score ≥ 7.'}
+          </div>
+          <ScoreCards scores={scores} showBanner={false} />
         </div>
       )}
     </div>
