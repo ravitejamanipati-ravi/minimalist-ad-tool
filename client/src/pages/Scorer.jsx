@@ -30,7 +30,9 @@ export default function Scorer({ adText, setAdText, scores, setScores }) {
       <div>
         <h1 className="text-xl font-semibold">Ad Scorer</h1>
         <p className="text-sm text-gray-500 mt-1">
-          Three independent dimensions. Policy failures block export. Tone and language warn.
+          Ads generated in this tool are scored automatically. Use this tab to score any other ad
+          copy — a different draft, a competitor comparison, or anything a reviewer wants checked
+          before it goes live.
         </p>
       </div>
 
