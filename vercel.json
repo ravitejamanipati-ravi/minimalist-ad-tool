@@ -2,11 +2,12 @@
   "buildCommand": "cd client && npm install && npm run build",
   "outputDirectory": "client/dist",
   "functions": {
-    "api/[...path].js": {
+    "api/index.js": {
       "includeFiles": "server/prompts/**"
     }
   },
   "rewrites": [
+    { "source": "/api/:path*", "destination": "/api/index" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
