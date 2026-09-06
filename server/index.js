@@ -15,5 +15,9 @@ app.use('/api/generate', generateRouter)
 app.use('/api/score', scoreRouter)
 app.use('/api/prompts', promptsRouter)
 
-const PORT = process.env.PORT || 3001
-app.listen(PORT, () => console.log(`Server on :${PORT}`))
+export default app
+
+if (!process.env.VERCEL) {
+  const PORT = process.env.PORT || 3001
+  app.listen(PORT, () => console.log(`Server on :${PORT}`))
+}
