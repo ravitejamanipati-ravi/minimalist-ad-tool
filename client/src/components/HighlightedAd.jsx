@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 const DIM = {
   policy:   { mark: 'bg-red-100 border-red-400',    tooltip: 'bg-red-50 border-red-200'    },
@@ -8,6 +8,18 @@ const DIM = {
 
 export default function HighlightedAd({ text, scores }) {
   const [open, setOpen] = useState(null)
+  const containerRef = useRef(null)
+
+  useEffect(() => {
+    if (!open) return
+    function handleOutside(e) {
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
+        setOpen(null)
+      }
+    }
+    document.addEventListener('click', handleOutside)
+    return () => document.removeEventListener('click', handleOutside)
+  }, [open])
 
   // Collect spans from all three dimensions
   const raw = []
@@ -55,7 +67,7 @@ export default function HighlightedAd({ text, scores }) {
   return (
     <div className="space-y-2">
       <p className="text-xs font-medium uppercase tracking-wider text-gray-400">Findings in context</p>
-      <div className="border border-gray-200 rounded-lg p-4 text-sm leading-relaxed whitespace-pre-wrap">
+      <div ref={containerRef} className="border border-gray-200 rounded-lg p-4 text-sm leading-relaxed whitespace-pre-wrap">
         {segments.map((seg, i) => {
           if (seg.type === 'text') return <span key={i}>{seg.content}</span>
           const colors = DIM[seg.dim]
