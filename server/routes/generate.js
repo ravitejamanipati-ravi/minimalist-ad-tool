@@ -22,13 +22,25 @@ router.post('/', async (req, res) => {
       messages: [
         {
           role: 'user',
-          content: `Generate an ad for this product:\n\nTitle: ${product.title}\nDescription: ${product.description}\nPrice: ₹${product.price}\nTags: ${product.tags.join(', ')}\n\nReturn only valid JSON.`,
+          content: [
+            'Generate an ad for this product:',
+            '',
+            `Title: ${product.title}`,
+            `Description: ${product.description || 'not provided'}`,
+            `Price: ${product.price ? `₹${product.price}` : 'not provided'}`,
+            `Tags: ${product.tags?.length ? product.tags.join(', ') : 'none'}`,
+            '',
+            'Return only a valid JSON object. No other text.',
+          ].join('\n'),
         },
       ],
     })
 
-    const text = message.content[0].text.trim()
-    const json = JSON.parse(text.replace(/^```json\s*|\s*```$/g, ''))
+    const raw = message.content[0].text.trim()
+    const start = raw.indexOf('{')
+    const end = raw.lastIndexOf('}')
+    if (start === -1 || end === -1) throw new Error('Model did not return a JSON object')
+    const json = JSON.parse(raw.slice(start, end + 1))
     res.json(json)
   } catch (e) {
     console.error(e)
